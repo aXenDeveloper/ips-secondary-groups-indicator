@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22001" version_human="2.2.1" author="aXenDev" website="https://axendev.net/" update_check="http://axendev.net/myapps/plugins/secondarygroupsindicator/check.php"><hooks><hook type="S" class="\IPS\Theme\class_forums_front_topics" filename="aXenTopic"><![CDATA[//<?php
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	exit;
+}
+
+class hook36 extends _HOOK_CLASS_
+{
+
+/* !Hook Data - DO NOT REMOVE */
+public static function hookData() {
+ return array_merge_recursive( array (
+  'postContainer' => 
+  array (
+    0 => 
+    array (
+      'selector' => 'article > aside.ipsComment_author.cAuthorPane.ipsColumn.ipsColumn_medium.ipsResponsive_hidePhone > ul.cAuthorPane_info.ipsList_reset > li[data-role=\'group\']',
+      'type' => 'add_after',
+      'content' => '{{if settings.aXenGroupTopics}}
+	{{if $comment->author()->sortedGroups()}}
+		{{foreach $comment->author()->sortedGroups() as $group}}
+				<li data-role="groupSecondary">{$group->formattedName|raw}</li>
+		{{endforeach}}
+	{{endif}}
+{{endif}}',
+    ),
+  ),
+), parent::hookData() );
+}
+/* End Hook Data */
+
+
+}
+]]></hook><hook type="C" class="\IPS\Member" filename="aXenGroupphp"><![CDATA[//<?php
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	exit;
+}
+
+class hook37 extends _HOOK_CLASS_
+{ 
+	public function sortedGroups()
+	{
+		try
+		{
+			try
+			{
+				try
+				{
+					$allGroups = \IPS\Member\Group::groups();
+					$ips1s2kGroups = explode(',', \IPS\Settings::i()->aXenGroup);
+					$otherGroups = array_flip(explode(',', $this->mgroup_others));
+					$sortedGroups = array();
+					$notSortedGroups = array();
+			      
+					foreach ($ips1s2kGroups as $id)
+					{
+			          	if (\in_array($id, explode(',', \IPS\Settings::i()->aXenGroupExclude))) unset($allGroups[$id]);
+						if (isset($allGroups[$id]) and isset($otherGroups[$id]))
+						{
+							$sortedGroups[$id] = $allGroups[$id];
+							unset($otherGroups[$id]);
+						}
+					}
+					foreach ($otherGroups as $sid => $i)
+					{
+			          	if (\in_array($sid, explode(',', \IPS\Settings::i()->aXenGroupExclude))) unset($allGroups[$sid]);
+						if (isset($allGroups[$sid])) $notSortedGroups[$sid] = $allGroups[$sid];
+					}
+					return ($sortedGroups + $notSortedGroups);
+				}
+				catch ( \RuntimeException $e )
+				{
+					if ( method_exists( get_parent_class(), __FUNCTION__ ) )
+					{
+						return \call_user_func_array( 'parent::' . __FUNCTION__, \func_get_args() );
+					}
+					else
+					{
+						throw $e;
+					}
+				}
+			}
+			catch ( \RuntimeException $e )
+			{
+				if ( method_exists( get_parent_class(), __FUNCTION__ ) )
+				{
+					return \call_user_func_array( 'parent::' . __FUNCTION__, \func_get_args() );
+				}
+				else
+				{
+					throw $e;
+				}
+			}
+		}
+		catch ( \RuntimeException $e )
+		{
+			if ( method_exists( get_parent_class(), __FUNCTION__ ) )
+			{
+				return \call_user_func_array( 'parent::' . __FUNCTION__, \func_get_args() );
+			}
+			else
+			{
+				throw $e;
+			}
+		}
+	}
+}]]></hook><hook type="S" class="\IPS\Theme\class_core_front_search" filename="aXenSearch"><![CDATA[//<?php
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	exit;
+}
+
+class hook38 extends _HOOK_CLASS_
+{
+
+/* !Hook Data - DO NOT REMOVE */
+public static function hookData() {
+ return array_merge_recursive( array (
+  'member' => 
+  array (
+    0 => 
+    array (
+      'selector' => 'li.ipsGrid_span4.ipsStreamItem.ipsStreamItem_contentBlock.ipsStreamItem_member.ipsAreaBackground_reset.ipsPad.ipsType_center > div.ipsStreamItem_container > div.ipsStreamItem_header.ipsSpacer_top.ipsSpacer_half > p.ipsType_reset.ipsType_medium',
+      'type' => 'add_after',
+      'content' => '{{if settings.aXenGroupSearch}}
+	{{if $member->sortedGroups()}}
+			{{foreach $member->sortedGroups() as $group}}
+				<p class="ipsType_reset ipsType_medium">{$group->formattedName|raw}</p>
+			{{endforeach}}
+	{{endif}}
+{{endif}}',
+    ),
+  ),
+), parent::hookData() );
+}
+/* End Hook Data */
+
+
+}
+]]></hook><hook type="S" class="\IPS\Theme\class_core_front_profile" filename="aXenProfile"><![CDATA[//<?php
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	exit;
+}
+
+class hook39 extends _HOOK_CLASS_
+{
+
+/* !Hook Data - DO NOT REMOVE */
+public static function hookData() {
+ return array_merge_recursive( array (
+  'hovercard' => 
+  array (
+    0 => 
+    array (
+      'selector' => 'div.cUserHovercard > div.cUserHovercard_data > ul.ipsDataList.ipsDataList_reducedSpacing',
+      'type' => 'add_inside_start',
+      'content' => '{{if settings.aXenGroupHovercard}}
+	{{if $member->sortedGroups()}}
+		<li class="ipsDataItem">
+			<span class="ipsDataItem_generic ipsDataItem_size3"><strong>{lang="aXenGroup_other"}</strong></span>
+			<span class="ipsDataItem_main">
+				{{$groups = [];}}
+					{{foreach $member->sortedGroups() as $group}}
+						{{$groups[] = $group->formattedName;}}
+					{{endforeach}}
+				{expression="implode(\', \', $groups)" raw="true"}
+			</span>
+		</li>
+	{{endif}}
+{{endif}}',
+    ),
+  ),
+  'profile' => 
+  array (
+    0 => 
+    array (
+      'selector' => '#elProfileInfoColumn > div.ipsPadding.ipsBox.ipsResponsive_pull',
+      'type' => 'add_inside_start',
+      'content' => '{{if settings.aXenGroupProfile and $member->sortedGroups()}}
+	<div class="ipsWidget ipsWidget_vertical cProfileSidebarBlock ipsBox ipsBox--child ipsSpacer_bottom" data-location="secondaryGroups">
+		<h2 class="ipsWidget_title ipsType_reset">{lang="aXenGroup_other"}</h2>
+		<div class="ipsWidget_inner ipsPad ipsFlex ipsFlex-ai:center ipsFlex-jc:center ipsFlex-fd:column">
+          	{{foreach $member->sortedGroups() as $group}}
+          		<span>{$group->formattedName|raw}</span>
+			{{endforeach}}
+		</div>
+	</div>
+{{endif}}',
+    ),
+  ),
+), parent::hookData() );
+}
+/* End Hook Data */
+
+
+}
+]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting></settings><settingsCode><![CDATA[//<?php
+
+$groups = array();
+foreach ( \IPS\Member\Group::groups() as $k => $v )
+{
+	if ( $k != \IPS\Settings::i()->guest_group )
+	{
+		$groups[ $k ] = $v->name;
+	}
+}
+
+$form->add( new \IPS\Helpers\Form\YesNo( 'aXenGroupTopics', \IPS\Settings::i()->aXenGroupTopics ) );
+$form->add( new \IPS\Helpers\Form\YesNo( 'aXenGroupHovercard', \IPS\Settings::i()->aXenGroupHovercard ) );
+$form->add( new \IPS\Helpers\Form\YesNo( 'aXenGroupProfile', \IPS\Settings::i()->aXenGroupProfile ) );
+$form->add( new \IPS\Helpers\Form\YesNo( 'aXenGroupSearch', \IPS\Settings::i()->aXenGroupSearch ) );
+$form->add( new \IPS\Helpers\Form\Stack( 'aXenGroup', (isset(\IPS\Settings::i()->aXenGroup)) ? explode(",", \IPS\Settings::i()->aXenGroup) : NULL, TRUE, array( 'stackFieldType' => 'Select', 'options' => $groups, 'parse' => 'normal' ) ) );
+$form->add(new \IPS\Helpers\Form\Select('aXenGroupExclude', \IPS\Settings::i()->aXenGroupExclude === '' ? '*' : (\IPS\Settings::i()->aXenGroupExclude === '*' ? '*' : explode(',', \IPS\Settings::i()->aXenGroupExclude)), FALSE, [ 'options' => \IPS\Member\Group::groups(TRUE, FALSE), 'multiple' => TRUE, 'parse' => 'normal' ]));
+
+if ( $values = $form->values() )
+{
+	$form->saveAsSettings();
+	return TRUE;
+}
+
+return $form;]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 1.1.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_11000
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="12000" human="1.2.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 1.2.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_12000
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="12001" human="1.2.1"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 1.2.1 Upgrade Code
+ */
+class ips_plugins_setup_upg_12001
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="20000" human="2.0.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.0.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_20000
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="20001" human="2.0.1"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.0.1 Upgrade Code
+ */
+class ips_plugins_setup_upg_20001
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="21000" human="2.1.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.1.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_21000
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22000" human="2.2.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.2.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_22000
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22001" human="2.2.1"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.2.1 Upgrade Code
+ */
+class ips_plugins_setup_upg_22001
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version></versions></plugin>
