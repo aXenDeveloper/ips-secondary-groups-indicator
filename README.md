@@ -1,1 +1,1 @@
-# ips-secondary-groups-indicator
+# (aXen) Secondary Groups Indicator
