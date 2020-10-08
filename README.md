@@ -1,5 +1,5 @@
 # (aXen) Secondary Groups Indicator
-The plugin allows you to display subgroups in module:
+The plugin show secondary groups on website in:
 - Topics
 - Hovercard
 - Profile
