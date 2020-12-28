@@ -6,53 +6,37 @@ The plugin show secondary groups on website in:
 - Search
 
 ## 📖 Table of contents
-- [🏷️ Requirements](#requirements)
-- [🧰 Install](#install)
-- [🛠️ Update](#update)
-- [📷 Graphics](#graphics)
-- [🔌 Download from other sources](#download)
+- [🏷️ Requirements](#user-content-️-requirements)
+- [🧰 Install](#user-content-️-install)
+- [🛠️ Update](#user-content-️-update)
+- [📷 Graphics](#user-content-️-graphics)
+- [🔌 Download from other sources](#user-content-download-from-other-sources)
 
-<a name="requirements"></a>
 ## 🏷️ Requirements
-- <a href="https://invisioncommunity.com/">IPS Community Suite</a>: 4.5 version
+- [IPS Community Suite: 4.5 version](https://invisioncommunity.com/)
 
-<a name="install"></a>
 ## 🧰 Install
-<ol>
-  <li>
-    Go to: AdminCP -> System -> SITE FEATURES -> <b>Plugins</b>.<br />
-    <img src="https://axendev.net/github/plugins/admincp_select.png" alt="Install Plugin" />
-  </li>
-  <li>
-    Click on the link "<b>manual upload</b>".<br />
-    <img src="https://axendev.net/github/plugins/manual_upload.png" alt="Manual Upload" />
-  </li>
-  <li>Select file .xml from packet and click install button.</li>
-</ol>
+1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,
+![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
+2. Click on the link **manual upload**,
+![Manual Upload](https://axendev.net/github/plugins/manual_upload.png)
+3. Select file **.xml** from packet and click install button
 
-<a name="update"></a>
 ## 🛠️ Update
-<ol>
-  <li>
-    Go to: AdminCP -> System -> SITE FEATURES -> <b>Plugins</b>.<br />
-    <img src="https://axendev.net/github/plugins/admincp_select.png" alt="Install Plugin" />
-  </li>
-  <li>
-    Search plugin and click "<b>Upload a new version</b>".<br />
-    <img src="https://axendev.net/github/plugins/new_version_upload.png" alt="Upload a new version" />
-  </li>
-  <li>Select file .xml from packet and click install button.</li>
-</ol>
+1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,
+![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
+2. Search plugin and click **Upload a new version**,
+![Upload a new version](https://axendev.net/github/plugins/new_version_upload.png)
+3. Select file **.xml** from packet and click install button.
 
-<a name="graphics"></a>
+
 ## 📷 Graphics:
-<img src="https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/1.png?raw=true" alt="1" />
-<img src="https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/2.png?raw=true" alt="2" />
-<img src="https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/3.png?raw=true" alt="3" />
-<img src="https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/4.png?raw=true" alt="4" />
-<img src="https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/5.png?raw=true" alt="5" />
+![1](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/1.png?raw=true)
+![2](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/2.png?raw=true)
+![3](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/3.png?raw=true)
+![4](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/4.png?raw=true)
+![5](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/5.png?raw=true)
 
-<a name="download"></a>
 ## 🔌 Download from other sources:
 - [invisioncommunity.com](https://invisioncommunity.com/files/file/8760-axen-secondary-groups-indicator/),
 - [invisionize.pl](https://forum.invisionize.pl/files/file/772-axen-secondary-groups-indicator/)
