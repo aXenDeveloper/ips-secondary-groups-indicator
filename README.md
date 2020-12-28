@@ -40,4 +40,4 @@ The plugin show secondary groups on website in:
 ## 🔌 Download from other sources:
 - [invisioncommunity.com](https://invisioncommunity.com/files/file/8760-axen-secondary-groups-indicator/),
 - [invisionize.pl](https://forum.invisionize.pl/files/file/772-axen-secondary-groups-indicator/)
-<p style="font-color: red">The resources from the links above are updated on an ongoing basis if the administration approves the file.</p>
+*The resources from the links above are updated on an ongoing basis if the administration approves the file.*
