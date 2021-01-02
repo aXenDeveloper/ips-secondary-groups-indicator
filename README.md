@@ -16,17 +16,17 @@ The plugin show secondary groups on website in:
 - [IPS Community Suite: 4.5 version](https://invisioncommunity.com/)
 
 ## 🧰 Install
-1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,
-![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
-2. Click on the link **manual upload**,
-![Manual Upload](https://axendev.net/github/plugins/manual_upload.png)
+1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,  
+  ![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
+2. Click on the link **manual upload**,  
+  ![Manual Upload](https://axendev.net/github/plugins/manual_upload.png)
 3. Select file **.xml** from packet and click install button
 
 ## 🛠️ Update
-1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,
-![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
-2. Search plugin and click **Upload a new version**,
-![Upload a new version](https://axendev.net/github/plugins/new_version_upload.png)
+1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,  
+  ![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
+2. Search plugin and click **Upload a new version**,  
+  ![Upload a new version](https://axendev.net/github/plugins/new_version_upload.png)
 3. Select file **.xml** from packet and click install button.
 
 
