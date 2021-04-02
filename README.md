@@ -7,27 +7,27 @@ The plugin show secondary groups on website in:
 - Profile
 - Search
 
-## Requirements 🏷️
+## 🏷️ Requirements
 
 - [IPS Community Suite: 4.5 version](https://invisioncommunity.com/)
 
-## Install 🧰
+## 🧰 Install
 
 1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,  
-   ![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
+   ![Select Plugin](https://files.axendev.net/github/plugins/admincp_select.png)
 2. Click on the link **manual upload**,  
-   ![Manual Upload](https://axendev.net/github/plugins/manual_upload.png)
+   ![Manual Upload](https://files.axendev.net/github/plugins/manual_upload.png)
 3. Select file **.xml** from packet and click install button
 
-## Update 🛠️
+## 🛠️ Update
 
 1. Go to: AdminCP -> System -> SITE FEATURES -> **Plugins**,  
-   ![Select Plugin](https://axendev.net/github/plugins/admincp_select.png)
+   ![Select Plugin](https://files.axendev.net/github/plugins/admincp_select.png)
 2. Search plugin and click **Upload a new version**,  
-   ![Upload a new version](https://axendev.net/github/plugins/new_version_upload.png)
+   ![Upload a new version](https://files.axendev.net/github/plugins/new_version_upload.png)
 3. Select file **.xml** from packet and click install button.
 
-## Graphics 📷
+## 📷 Graphics
 
 ![1](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/1.png?raw=true)
 ![2](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/2.png?raw=true)
@@ -35,7 +35,7 @@ The plugin show secondary groups on website in:
 ![4](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/4.png?raw=true)
 ![5](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/5.png?raw=true)
 
-## Download from other sources 🔌
+## 🔌 Download from other sources
 
 - [invisioncommunity.com](https://invisioncommunity.com/files/file/8760-axen-secondary-groups-indicator/),
 - [invisionize.pl](https://forum.invisionize.pl/files/file/772-axen-secondary-groups-indicator/)
