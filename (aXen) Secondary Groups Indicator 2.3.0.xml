@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22002" version_human="2.2.2" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22003" version_human="2.3.0" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
 	/* To prevent PHP errors (extending class does not exist) revealing path */
 	if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
 		exit;
 	}
 
-	class hook140 extends _HOOK_CLASS_
+	class hook166 extends _HOOK_CLASS_
 	{
 		public function aXenSGISortedGroups()
 		{
@@ -59,7 +59,7 @@
     exit;
   }
 
-  class hook141 extends _HOOK_CLASS_
+  class hook167 extends _HOOK_CLASS_
   {
 
     /* !Hook Data - DO NOT REMOVE */
@@ -94,7 +94,7 @@
     exit;
   }
 
-  class hook142 extends _HOOK_CLASS_
+  class hook168 extends _HOOK_CLASS_
   {
 
     /* !Hook Data - DO NOT REMOVE */
@@ -127,20 +127,19 @@
     exit;
   }
 
-  class hook143 extends _HOOK_CLASS_
+  class hook169 extends _HOOK_CLASS_
   {
 
     /* !Hook Data - DO NOT REMOVE */
-    public static function hookData()
-    {
-      return array_merge_recursive(array(
-        'profile' =>
-        array(
-          0 =>
-          array(
-            'selector' => '#elProfileInfoColumn > div.ipsBox',
-            'type' => 'add_inside_start',
-            'content' => '{{if settings.aXenGroupProfile and $member->aXenSGISortedGroups()}}
+public static function hookData() {
+ return array_merge_recursive( array (
+  'profile' => 
+  array (
+    0 => 
+    array (
+      'selector' => '#elProfileInfoColumn > div.ipsBox',
+      'type' => 'add_inside_start',
+      'content' => '{{if settings.aXenGroupProfile and $member->aXenSGISortedGroups()}}
 	<div class="ipsWidget ipsWidget_vertical cProfileSidebarBlock ipsBox ipsBox--child ipsSpacer_bottom" data-location="secondaryGroups">
 		<h2 class="ipsWidget_title ipsType_reset">{lang="aXenGroup_other"}</h2>
 		<div class="ipsWidget_inner ipsPad ipsFlex ipsFlex-ai:center ipsFlex-jc:center ipsFlex-fd:column">
@@ -150,33 +149,32 @@
 		</div>
 	</div>
 {{endif}}',
-          ),
-        ),
-        'hovercard' =>
-        array(
-          0 =>
-          array(
-            'selector' => 'div.cUserHovercard > div.cUserHovercard_data > ul.ipsDataList',
-            'type' => 'add_inside_start',
-            'content' => '{{if settings.aXenGroupHovercard}}
-	{{if $member->aXenSGISortedGroups()}}
-		<li class="ipsDataItem">
-			<span class="ipsDataItem_generic ipsDataItem_size3"><strong>{lang="aXenGroup_other"}</strong></span>
-			<span class="ipsDataItem_main">
-				{{$groups = [];}}
-					{{foreach $member->aXenSGISortedGroups() as $group}}
-						{{$groups[] = $group->formattedName;}}
-					{{endforeach}}
-				{expression="implode(\', \', $groups)" raw="true"}
-			</span>
-		</li>
-	{{endif}}
-{{endif}}',
-          ),
-        ),
-      ), parent::hookData());
-    }
-    /* End Hook Data */
+    ),
+  ),
+  'hovercard' => 
+  array (
+    0 => 
+    array (
+      'selector' => 'div.cUserHovercard > div.ipsPadding.ipsFlex.ipsFlex-fd:column.ipsFlex-ai:center > dl.ipsMargin:none.ipsMargin_top.ipsAreaBackground_light.ipsRadius.ipsFlex.ipsFlex-ai:center.ipsFlex-jc:around.ipsFlex-as:stretch.ipsPadding:half',
+      'type' => 'add_after',
+      'content' => '{{if $member->aXenSGISortedGroups() && settings.aXenGroupHovercard}}
+	<div class="ipsFlex ipsFlex-ai:center ipsFlex-jc:between ipsMargin_top ipsFlex-as:stretch">
+      <div class="ipsType_bold ipsFlex-flex:00 ipsMargin_right">
+      	{lang="aXenGroup_other"}
+      </div>
+      <ul class="ipsList_inline ipsList_csv ipsList_noSpacing ipsType_right">
+        {{foreach $member->aXenSGISortedGroups() as $group}}
+        	<li>{$group->formattedName|raw}</li>
+		{{endforeach}}
+      </ul>
+	</div>
+{{endif}}
+',
+    ),
+  ),
+), parent::hookData() );
+}
+/* End Hook Data */
   }
 ]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting></settings><settingsCode><![CDATA[//<?php
 
@@ -199,36 +197,7 @@
 	}
 
 	return $form;
-]]></settingsCode><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word></lang><versions><version long="10000" human="1.0.0"><![CDATA[//<?php
-
-
-/* To prevent PHP errors (extending class does not exist) revealing path */
-if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
-{
-	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
-	exit;
-}
-
-/**
- * Install Code
- */
-class ips_plugins_setup_install
-{
-	/**
-	 * ...
-	 *
-	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
-	 */
-	public function step1()
-	{
-		
-
-		return TRUE;
-	}
-	
-	// You can create as many additional methods (step2, step3, etc.) as is necessary.
-	// Each step will be executed in a new HTTP request
-}]]></version><version long="11000" human="1.1.0"><![CDATA[//<?php
+]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
 
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -474,6 +443,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 2.2.2 Upgrade Code
  */
 class ips_plugins_setup_upg_22002
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22003" human="2.3.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.3.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_22003
 {
 	/**
 	 * ...
