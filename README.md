@@ -9,7 +9,7 @@ The plugin show secondary groups on website in:
 
 ## 🏷️ Requirements
 
-- [IPS Community Suite: 4.6 version](https://invisioncommunity.com/)
+- [IPS Community Suite: 4.5, 4.6 version](https://invisioncommunity.com/)
 
 ## 🧰 Install
 
