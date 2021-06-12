@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22004" version_human="2.3.1" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22005" version_human="2.3.2" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
 	/* To prevent PHP errors (extending class does not exist) revealing path */
 	if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -98,27 +98,26 @@
   {
 
     /* !Hook Data - DO NOT REMOVE */
-    public static function hookData()
-    {
-      return array_merge_recursive(array(
-        'postContainer' =>
-        array(
-          0 =>
-          array(
-            'selector' => 'article > aside.ipsComment_author.cAuthorPane > ul.cAuthorPane_info > li[data-role=\'group\']',
-            'type' => 'add_after',
-            'content' => '{{if settings.aXenGroupTopics}}
+public static function hookData() {
+ return array_merge_recursive( array (
+  'postContainer' => 
+  array (
+    0 => 
+    array (
+      'selector' => 'article > aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group\']',
+      'type' => 'add_after',
+      'content' => '{{if settings.aXenGroupTopics}}
 	{{if $comment->author()->aXenSGISortedGroups()}}
 		{{foreach $comment->author()->aXenSGISortedGroups() as $group}}
 				<li data-role="groupSecondary">{$group->formattedName|raw}</li>
 		{{endforeach}}
 	{{endif}}
 {{endif}}',
-          ),
-        ),
-      ), parent::hookData());
-    }
-    /* End Hook Data */
+    ),
+  ),
+), parent::hookData() );
+}
+/* End Hook Data */
   }
 ]]></hook><hook type="S" class="\IPS\Theme\class_core_front_profile" filename="aXenSGIProfile"><![CDATA[//<?php
 
@@ -522,6 +521,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 2.3.1 Upgrade Code
  */
 class ips_plugins_setup_upg_22004
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22005" human="2.3.2"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 2.3.2 Upgrade Code
+ */
+class ips_plugins_setup_upg_22005
 {
 	/**
 	 * ...
