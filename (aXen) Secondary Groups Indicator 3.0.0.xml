@@ -1,57 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22005" version_human="2.3.2" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22006" version_human="3.0.0" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
-	/* To prevent PHP errors (extending class does not exist) revealing path */
-	if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
-		exit;
-	}
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
+    exit;
+}
 
-	class hook166 extends _HOOK_CLASS_
+class hook166 extends _HOOK_CLASS_
+{
+    public function aXenSGISortedGroups()
+    {
+	try
 	{
-		public function aXenSGISortedGroups()
-		{
-			try
-			{
-				try {
-					$allGroups = \IPS\Member\Group::groups();
-					$arrayGruups = explode(',', \IPS\Settings::i()->aXenGroup);
-					$arrayGruupsFlip = array_flip(explode(',', $this->mgroup_others));
-					$sortedGroups = array();
-					$notSortedGroups = array();
+	        try {
+	            $allGroups = \IPS\Member\Group::groups();
+	            $arrayGroups = explode(',', \IPS\Settings::i()->aXenGroup);
+	            $arrayGroupsFlip = array_flip(explode(',', $this->mgroup_others));
+	            $sortedGroups = [];
+	            $notSortedGroups = [];
 	
-					foreach ($arrayGruups as $id) {
-						if (\in_array($id, explode(',', \IPS\Settings::i()->aXenGroupExclude))) unset($allGroups[$id]);
-						if (isset($allGroups[$id]) and isset($arrayGruupsFlip[$id])) {
-							$sortedGroups[$id] = $allGroups[$id];
-							unset($arrayGruupsFlip[$id]);
-						}
-					}
-					foreach ($arrayGruupsFlip as $sid => $i) {
-						if (\in_array($sid, explode(',', \IPS\Settings::i()->aXenGroupExclude))) unset($allGroups[$sid]);
-						if (isset($allGroups[$sid])) $notSortedGroups[$sid] = $allGroups[$sid];
-					}
-					return ($sortedGroups + $notSortedGroups);
-				} catch (\RuntimeException $e) {
-					if (method_exists(get_parent_class(), __FUNCTION__)) {
-						return \call_user_func_array('parent::' . __FUNCTION__, \func_get_args());
-					} else {
-						throw $e;
-					}
-				}
-			}
-			catch ( \RuntimeException $e )
-			{
-				if ( method_exists( get_parent_class(), __FUNCTION__ ) )
-				{
-					return \call_user_func_array( 'parent::' . __FUNCTION__, \func_get_args() );
-				}
-				else
-				{
-					throw $e;
-				}
-			}
+	            foreach ($arrayGroups as $id) {
+	                if (\in_array($id, explode(',', \IPS\Settings::i()->aXenGroupExclude))) {
+	                    unset($allGroups[$id]);
+	                };
+	
+	                if (isset($allGroups[$id]) and isset($arrayGroupsFlip[$id])) {
+	                    $sortedGroups[$id] = $allGroups[$id];
+	                    unset($arrayGroupsFlip[$id]);
+	                }
+	            }
+	
+	            foreach ($arrayGroupsFlip as $sid => $i) {
+	                if (\in_array($sid, explode(',', \IPS\Settings::i()->aXenGroupExclude))) {
+	                    unset($allGroups[$sid]);
+	                };
+	
+	                if (isset($allGroups[$sid])) {
+	                    $notSortedGroups[$sid] = $allGroups[$sid];
+	                };
+	            }
+	
+	            return ($sortedGroups + $notSortedGroups);
+	        } catch (\RuntimeException$e) {
+	            if (method_exists(get_parent_class(), __FUNCTION__)) {
+	                return \call_user_func_array('parent::' . __FUNCTION__, \func_get_args());
+	            } else {
+	                throw $e;
+	            }
+	        }
+	}
+	catch ( \Error | \RuntimeException $e )
+	{
+		if ( method_exists( get_parent_class(), __FUNCTION__ ) )
+		{
+			return \call_user_func_array( 'parent::' . __FUNCTION__, \func_get_args() );
+		}
+		else
+		{
+			throw $e;
 		}
 	}
+    }
+}
 ]]></hook><hook type="S" class="\IPS\Theme\class_core_front_search" filename="aXenSGISearch"><![CDATA[//<?php
 
   /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -89,13 +99,13 @@
   }
 ]]></hook><hook type="S" class="\IPS\Theme\class_forums_front_topics" filename="aXenSGITopics"><![CDATA[//<?php
 
-  /* To prevent PHP errors (extending class does not exist) revealing path */
-  if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
     exit;
-  }
+}
 
-  class hook168 extends _HOOK_CLASS_
-  {
+class hook168 extends _HOOK_CLASS_
+{
 
     /* !Hook Data - DO NOT REMOVE */
 public static function hookData() {
@@ -104,21 +114,38 @@ public static function hookData() {
   array (
     0 => 
     array (
-      'selector' => 'article > aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group\']',
+      'selector' => 'article > aside.ipsComment_author.cAuthorPane.ipsColumn.ipsColumn_medium.ipsResponsive_hidePhone > ul.cAuthorPane_info.ipsList_reset > li[data-role=\'group\']',
       'type' => 'add_after',
-      'content' => '{{if settings.aXenGroupTopics}}
+      'content' => '{{if \IPS\Member\Group::load( $comment->author()->member_group_id )->g_icon }}
+	<li data-role=\'axen-group-icon\'>
+    	<img src=\'{file="$comment->author()->group[\'g_icon\']" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
+	</li>
+{{endif}}
+
+{{if settings.aXenGroupTopics}}
 	{{if $comment->author()->aXenSGISortedGroups()}}
 		{{foreach $comment->author()->aXenSGISortedGroups() as $group}}
-				<li data-role="groupSecondary">{$group->formattedName|raw}</li>
+				<li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
+				{{if $group->g_icon && settings.aXenGroupIcon}}
+					<li data-role=\'axen-group-icon-secondary\'>
+                    	<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
+					</li>
+				{{endif}}
 		{{endforeach}}
 	{{endif}}
 {{endif}}',
+    ),
+    1 => 
+    array (
+      'selector' => 'article > aside.ipsComment_author.cAuthorPane.ipsColumn.ipsColumn_medium.ipsResponsive_hidePhone > ul.cAuthorPane_info.ipsList_reset > li[data-role=\'group-icon\']',
+      'type' => 'replace',
+      'content' => '',
     ),
   ),
 ), parent::hookData() );
 }
 /* End Hook Data */
-  }
+}
 ]]></hook><hook type="S" class="\IPS\Theme\class_core_front_profile" filename="aXenSGIProfile"><![CDATA[//<?php
 
   /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -144,6 +171,9 @@ public static function hookData() {
 		<div class="ipsWidget_inner ipsPad ipsFlex ipsFlex-ai:center ipsFlex-jc:center ipsFlex-fd:column">
           	{{foreach $member->aXenSGISortedGroups() as $group}}
           		<span>{$group->formattedName|raw}</span>
+          		{{if $group->g_icon && settings.aXenGroupIcon}}
+					<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
+				{{endif}}
 			{{endforeach}}
 		</div>
 	</div>
@@ -193,31 +223,33 @@ public static function hookData() {
 }
 /* End Hook Data */
   }
-]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting></settings><settingsCode><![CDATA[//<?php
+]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroupIcon</key><default>0</default></setting></settings><settingsCode><![CDATA[//<?php
 
-	$groups = array();
-	foreach (\IPS\Member\Group::groups() as $k => $v) {
-		if ($k != \IPS\Settings::i()->guest_group) {
-			$groups[$k] = $v->name;
-		}
-	}
+$groups = array();
+foreach (\IPS\Member\Group::groups() as $k => $v) {
+    if ($k != \IPS\Settings::i()->guest_group) {
+        $groups[$k] = $v->name;
+    }
+}
 
-	$form->add(new \IPS\Helpers\Form\Select('aXenGroupVersion', \IPS\Settings::i()->aXenGroupVersion, TRUE, [
-		'options' => ['ips45' => 'IPS 4.5', 'ips46' => 'IPS 4.6']
-	]));
-	$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupTopics', \IPS\Settings::i()->aXenGroupTopics));
-	$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupHovercard', \IPS\Settings::i()->aXenGroupHovercard));
-	$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupProfile', \IPS\Settings::i()->aXenGroupProfile));
-	$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupSearch', \IPS\Settings::i()->aXenGroupSearch));
-	$form->add(new \IPS\Helpers\Form\Stack('aXenGroup', (isset(\IPS\Settings::i()->aXenGroup)) ? explode(",", \IPS\Settings::i()->aXenGroup) : NULL, TRUE, array('stackFieldType' => 'Select', 'options' => $groups, 'parse' => 'normal')));
-	$form->add(new \IPS\Helpers\Form\Select('aXenGroupExclude', \IPS\Settings::i()->aXenGroupExclude === '' ? '*' : (\IPS\Settings::i()->aXenGroupExclude === '*' ? '*' : explode(',', \IPS\Settings::i()->aXenGroupExclude)), FALSE, ['options' => \IPS\Member\Group::groups(TRUE, FALSE), 'multiple' => TRUE, 'parse' => 'normal']));
-	if ($values = $form->values()) {
-		$form->saveAsSettings();
-		return TRUE;
-	}
+$form->add(new \IPS\Helpers\Form\Select('aXenGroupVersion', \IPS\Settings::i()->aXenGroupVersion, true, [
+    'options' => ['ips45' => 'IPS 4.5', 'ips46' => 'IPS 4.6'],
+]));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupIcon', \IPS\Settings::i()->aXenGroupIcon));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupTopics', \IPS\Settings::i()->aXenGroupTopics));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupHovercard', \IPS\Settings::i()->aXenGroupHovercard));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupProfile', \IPS\Settings::i()->aXenGroupProfile));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupSearch', \IPS\Settings::i()->aXenGroupSearch));
+$form->add(new \IPS\Helpers\Form\Stack('aXenGroup', (isset(\IPS\Settings::i()->aXenGroup)) ? explode(",", \IPS\Settings::i()->aXenGroup) : null, true, array('stackFieldType' => 'Select', 'options' => $groups, 'parse' => 'normal')));
+$form->add(new \IPS\Helpers\Form\Select('aXenGroupExclude', \IPS\Settings::i()->aXenGroupExclude === '' ? '*' : (\IPS\Settings::i()->aXenGroupExclude === '*' ? '*' : explode(',', \IPS\Settings::i()->aXenGroupExclude)), false, ['options' => \IPS\Member\Group::groups(true, false), 'multiple' => true, 'parse' => 'normal']));
 
-	return $form;
-]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
+if ($values = $form->values()) {
+    $form->saveAsSettings();
+    return true;
+}
+
+return $form;
+]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupIcon" js="0">Display group secondary icons?</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
 
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -550,6 +582,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 2.3.2 Upgrade Code
  */
 class ips_plugins_setup_upg_22005
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22006" human="3.0.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 3.0.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_22006
 {
 	/**
 	 * ...
