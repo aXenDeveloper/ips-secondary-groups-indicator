@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22006" version_human="3.0.0" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22007" version_human="3.0.1" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -115,8 +115,14 @@ public static function hookData() {
     0 => 
     array (
       'selector' => 'article > aside.ipsComment_author.cAuthorPane.ipsColumn.ipsColumn_medium.ipsResponsive_hidePhone > ul.cAuthorPane_info.ipsList_reset > li[data-role=\'group\']',
-      'type' => 'add_after',
-      'content' => '{{if \IPS\Member\Group::load( $comment->author()->member_group_id )->g_icon }}
+      'type' => 'replace',
+      'content' => '{{if (settings.aXenGroupIcon && settings.aXenGroupIcon_name) || !settings.aXenGroupIcon}}
+	<li data-role="group">
+		{expression="\IPS\Member\Group::load( $comment->author()->member_group_id )->formattedName" raw="true"}
+	</li>
+{{endif}}
+
+{{if \IPS\Member\Group::load( $comment->author()->member_group_id )->g_icon && settings.aXenGroupIcon_first }}
 	<li data-role=\'axen-group-icon\'>
     	<img src=\'{file="$comment->author()->group[\'g_icon\']" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
 	</li>
@@ -125,7 +131,10 @@ public static function hookData() {
 {{if settings.aXenGroupTopics}}
 	{{if $comment->author()->aXenSGISortedGroups()}}
 		{{foreach $comment->author()->aXenSGISortedGroups() as $group}}
-				<li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
+				{{if (settings.aXenGroupIcon && settings.aXenGroupIcon_name) || !settings.aXenGroupIcon}}
+					<li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
+				{{endif}}
+
 				{{if $group->g_icon && settings.aXenGroupIcon}}
 					<li data-role=\'axen-group-icon-secondary\'>
                     	<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
@@ -223,7 +232,7 @@ public static function hookData() {
 }
 /* End Hook Data */
   }
-]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroupIcon</key><default>0</default></setting></settings><settingsCode><![CDATA[//<?php
+]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroupIcon</key><default>0</default></setting><setting><key>aXenGroupIcon_name</key><default>1</default></setting><setting><key>aXenGroupIcon_first</key><default>1</default></setting></settings><settingsCode><![CDATA[//<?php
 
 $groups = array();
 foreach (\IPS\Member\Group::groups() as $k => $v) {
@@ -235,11 +244,25 @@ foreach (\IPS\Member\Group::groups() as $k => $v) {
 $form->add(new \IPS\Helpers\Form\Select('aXenGroupVersion', \IPS\Settings::i()->aXenGroupVersion, true, [
     'options' => ['ips45' => 'IPS 4.5', 'ips46' => 'IPS 4.6'],
 ]));
-$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupIcon', \IPS\Settings::i()->aXenGroupIcon));
+
+$form->addHeader('aXenGroupHeader_show');
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupTopics', \IPS\Settings::i()->aXenGroupTopics));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupHovercard', \IPS\Settings::i()->aXenGroupHovercard));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupProfile', \IPS\Settings::i()->aXenGroupProfile));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupSearch', \IPS\Settings::i()->aXenGroupSearch));
+
+$form->addHeader('aXenGroupHeader_config');
+$form->add(new \IPS\Helpers\Form\YesNo(
+    'aXenGroupIcon',
+    \IPS\Settings::i()->aXenGroupIcon,
+    false,
+    array('togglesOn' => array(
+        'aXenGroupIcon_name',
+    ))
+));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupIcon_name', \IPS\Settings::i()->aXenGroupIcon_name, false, [], null, null, null, 'aXenGroupIcon_name'));
+$form->add(new \IPS\Helpers\Form\YesNo('aXenGroupIcon_first', \IPS\Settings::i()->aXenGroupIcon_first));
+
 $form->add(new \IPS\Helpers\Form\Stack('aXenGroup', (isset(\IPS\Settings::i()->aXenGroup)) ? explode(",", \IPS\Settings::i()->aXenGroup) : null, true, array('stackFieldType' => 'Select', 'options' => $groups, 'parse' => 'normal')));
 $form->add(new \IPS\Helpers\Form\Select('aXenGroupExclude', \IPS\Settings::i()->aXenGroupExclude === '' ? '*' : (\IPS\Settings::i()->aXenGroupExclude === '*' ? '*' : explode(',', \IPS\Settings::i()->aXenGroupExclude)), false, ['options' => \IPS\Member\Group::groups(true, false), 'multiple' => true, 'parse' => 'normal']));
 
@@ -249,7 +272,7 @@ if ($values = $form->values()) {
 }
 
 return $form;
-]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupIcon" js="0">Display group secondary icons?</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
+]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupIcon" js="0">Display group secondary icons?</word><word key="aXenGroupIcon_name" js="0">Show groups name as text?</word><word key="aXenGroupIcon_first" js="0">Show first group icons?</word><word key="aXenGroupHeader_show" js="0">Show</word><word key="aXenGroupHeader_config" js="0">Configuration</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
 
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -611,6 +634,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 3.0.0 Upgrade Code
  */
 class ips_plugins_setup_upg_22006
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22007" human="3.0.1"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 3.0.1 Upgrade Code
+ */
+class ips_plugins_setup_upg_22007
 {
 	/**
 	 * ...

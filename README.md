@@ -7,6 +7,8 @@ The plugin show secondary groups on website in:
 - Profile
 - Search
 
+Include with **Secondary Groups Icon** in 3.0.0 version.
+
 ## 🏷️ Requirements
 
 - [IPS Community Suite: 4.5, 4.6 version](https://invisioncommunity.com/)
