@@ -179,7 +179,9 @@ public static function hookData() {
 		<h2 class="ipsWidget_title ipsType_reset">{lang="aXenGroup_other"}</h2>
 		<div class="ipsWidget_inner ipsPad ipsFlex ipsFlex-ai:center ipsFlex-jc:center ipsFlex-fd:column">
           	{{foreach $member->aXenSGISortedGroups() as $group}}
-          		<span>{$group->formattedName|raw}</span>
+          		{{if (settings.aXenGroupIcon && settings.aXenGroupIcon_name) || !settings.aXenGroupIcon}}
+          			<span>{$group->formattedName|raw}</span>
+          		{{endif}}
           		{{if $group->g_icon && settings.aXenGroupIcon}}
 					<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
 				{{endif}}
