@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22008" version_human="3.0.2" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22009" version_human="3.0.3" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -64,39 +64,35 @@ class hook166 extends _HOOK_CLASS_
 }
 ]]></hook><hook type="S" class="\IPS\Theme\class_core_front_search" filename="aXenSGISearch"><![CDATA[//<?php
 
-  /* To prevent PHP errors (extending class does not exist) revealing path */
-  if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
     exit;
-  }
+}
 
-  class hook167 extends _HOOK_CLASS_
-  {
+class hook167 extends _HOOK_CLASS_
+{
 
     /* !Hook Data - DO NOT REMOVE */
     public static function hookData()
     {
-      return array_merge_recursive(array(
-        'member' =>
-        array(
-          0 =>
-          array(
-            'selector' => 'li.ipsStreamItem_member > div.ipsStreamItem_container > div.ipsStreamItem_header > p',
-            'type' => 'add_after',
-            'content' => '
-{{if settings.aXenGroupSearch}}
-  {{if $member->aXenSGISortedGroups()}}
-    {{foreach $member->aXenSGISortedGroups() as $group}}
-      <p class="ipsType_reset ipsType_medium">{$group->formattedName|raw}</p>
-		{{endforeach}}
-	{{endif}}
+        return array_merge_recursive(array(
+            'member' => array(
+                0 => array(
+                    'selector' => 'li.ipsStreamItem_member > div.ipsStreamItem_container > div.ipsStreamItem_header > p',
+                    'type' => 'add_after',
+                    'content' => '
+{{if $member->aXenSGISortedGroups() && settings.aXenGroupSearch}}
+  {{foreach $member->aXenSGISortedGroups() as $group}}
+    <p class="ipsType_reset ipsType_medium">{$group->formattedName|raw}</p>
+  {{endforeach}}
 {{endif}}
 ',
-          ),
-        ),
-      ), parent::hookData());
+                ),
+            ),
+        ), parent::hookData());
     }
     /* End Hook Data */
-  }
+}
 ]]></hook><hook type="S" class="\IPS\Theme\class_forums_front_topics" filename="aXenSGITopics"><![CDATA[//<?php
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -115,33 +111,33 @@ class hook168 extends _HOOK_CLASS_
                 0 => array(
                     'selector' => 'article aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group\']',
                     'type' => 'replace',
-                    'content' => '{{if settings.aXenGroupDisplay < 3}}
+                    'content' => '{{if settings.aXenGroup_display_primary == 1 || settings.aXenGroup_display_primary == 3}}
 	<li data-role="group">
 		{expression="\IPS\Member\Group::load( $comment->author()->member_group_id )->formattedName" raw="true"}
 	</li>
 {{endif}}
 
-{{if \IPS\Member\Group::load( $comment->author()->member_group_id )->g_icon && settings.aXenGroupDisplay != 2}}
+{{if \IPS\Member\Group::load( $comment->author()->member_group_id )->g_icon && settings.aXenGroup_display_primary >= 2}}
 	<li data-role=\'axen-group-icon\'>
     	<img src=\'{file="$comment->author()->group[\'g_icon\']" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
 	</li>
 {{endif}}
 
-{{if settings.aXenGroupTopics}}
-	{{if $comment->author()->aXenSGISortedGroups()}}
-		{{foreach $comment->author()->aXenSGISortedGroups() as $group}}
-				{{if settings.aXenGroupDisplay < 3 || (settings.aXenGroupDisplay == 3 && !$group->g_icon)}}
-					<li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
-				{{endif}}
 
-				{{if $group->g_icon && (settings.aXenGroupDisplay == 0 || settings.aXenGroupDisplay == 3)}}
-					<li data-role=\'axen-group-icon-secondary\'>
-                    	<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
-					</li>
-				{{endif}}
-		{{endforeach}}
-	{{endif}}
-{{endif}}',
+{{if $comment->author()->aXenSGISortedGroups() && settings.aXenGroup_display_secondary > 0}}
+    {{foreach $comment->author()->aXenSGISortedGroups() as $group}}
+            {{if settings.aXenGroup_display_secondary == 1 || settings.aXenGroup_display_secondary == 3 || (settings.aXenGroup_display_secondary == 2 && !$group->g_icon)}}
+                <li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
+            {{endif}}
+
+            {{if $group->g_icon && (settings.aXenGroup_display_secondary >= 2)}}
+                <li data-role=\'axen-group-icon-secondary\'>
+                    <img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
+                </li>
+            {{endif}}
+    {{endforeach}}
+{{endif}}
+',
                 ),
                 1 => array(
                     'selector' => 'article aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group-icon\']',
@@ -171,15 +167,16 @@ class hook169 extends _HOOK_CLASS_
                 0 => array(
                     'selector' => '#elProfileInfoColumn > div.ipsBox',
                     'type' => 'add_inside_start',
-                    'content' => '{{if settings.aXenGroupProfile and $member->aXenSGISortedGroups()}}
+                    'content' => '{{if settings.aXenGroupProfile && $member->aXenSGISortedGroups() && settings.aXenGroup_display_secondary > 0}}
 	<div class="ipsWidget ipsWidget_vertical cProfileSidebarBlock ipsBox ipsBox--child ipsSpacer_bottom" data-location="secondaryGroups">
 		<h2 class="ipsWidget_title ipsType_reset">{lang="aXenGroup_other"}</h2>
 		<div class="ipsWidget_inner ipsPad ipsFlex ipsFlex-ai:center ipsFlex-jc:center ipsFlex-fd:column">
           	{{foreach $member->aXenSGISortedGroups() as $group}}
-          		{{if settings.aXenGroupDisplay < 3 || (settings.aXenGroupDisplay == 3 && !$group->g_icon)}}
+          		{{if settings.aXenGroup_display_secondary == 1 || settings.aXenGroup_display_secondary == 3 || (settings.aXenGroup_display_secondary == 2 && !$group->g_icon)}}
           			<span>{$group->formattedName|raw}</span>
           		{{endif}}
-          		{{if $group->g_icon && (settings.aXenGroupDisplay == 0 || settings.aXenGroupDisplay == 3)}}
+
+          		{{if $group->g_icon && settings.aXenGroup_display_secondary >= 2}}
 					<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
 				{{endif}}
 			{{endforeach}}
@@ -228,7 +225,7 @@ class hook169 extends _HOOK_CLASS_
     }
 /* End Hook Data */
 }
-]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroupDisplay</key><default>0</default></setting></settings><settingsCode><![CDATA[//<?php
+]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroup_display_primary</key><default>3</default></setting><setting><key>aXenGroup_display_secondary</key><default>3</default></setting></settings><settingsCode><![CDATA[//<?php
 
 $groups = array();
 foreach (\IPS\Member\Group::groups() as $k => $v) {
@@ -247,14 +244,21 @@ $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupHovercard', \IPS\Settings::i()-
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupProfile', \IPS\Settings::i()->aXenGroupProfile));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupSearch', \IPS\Settings::i()->aXenGroupSearch));
 
-$form->addHeader('aXenGroupHeader_config');
-$form->add(new \IPS\Helpers\Form\Select('aXenGroupDisplay', \IPS\Settings::i()->aXenGroupDisplay, false, ['options' => [
-    0 => 'aXenGroupDisplay_0',
-    1 => 'aXenGroupDisplay_1',
-    2 => 'aXenGroupDisplay_2',
-    3 => 'aXenGroupDisplay_3',
+$form->addHeader('aXenGroupHeader_display');
+$form->add(new \IPS\Helpers\Form\Select('aXenGroup_display_primary', \IPS\Settings::i()->aXenGroup_display_primary, false, ['options' => [
+    0 => 'aXenGroup_display_0',
+    1 => 'aXenGroup_display_1',
+    2 => 'aXenGroup_display_2',
+    3 => 'aXenGroup_display_3',
+]]));
+$form->add(new \IPS\Helpers\Form\Select('aXenGroup_display_secondary', \IPS\Settings::i()->aXenGroup_display_secondary, false, ['options' => [
+    0 => 'aXenGroup_display_0',
+    1 => 'aXenGroup_display_1',
+    2 => 'aXenGroup_display_2',
+    3 => 'aXenGroup_display_3',
 ]]));
 
+$form->addHeader('aXenGroupHeader_config');
 $form->add(new \IPS\Helpers\Form\Stack('aXenGroup', (isset(\IPS\Settings::i()->aXenGroup)) ? explode(",", \IPS\Settings::i()->aXenGroup) : null, true, array('stackFieldType' => 'Select', 'options' => $groups, 'parse' => 'normal')));
 $form->add(new \IPS\Helpers\Form\Select('aXenGroupExclude', \IPS\Settings::i()->aXenGroupExclude === '' ? '*' : (\IPS\Settings::i()->aXenGroupExclude === '*' ? '*' : explode(',', \IPS\Settings::i()->aXenGroupExclude)), false, ['options' => \IPS\Member\Group::groups(true, false), 'multiple' => true, 'parse' => 'normal']));
 
@@ -264,7 +268,7 @@ if ($values = $form->values()) {
 }
 
 return $form;
-]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupHeader_show" js="0">Show</word><word key="aXenGroupHeader_config" js="0">Configuration</word><word key="aXenGroupDisplay" js="0">Display groups</word><word key="aXenGroupDisplay_0" js="0">Icon and text for all group</word><word key="aXenGroupDisplay_1" js="0">Only icon for primary group and text for all groups</word><word key="aXenGroupDisplay_2" js="0">Only text for all groups</word><word key="aXenGroupDisplay_3" js="0">Only icon for all groups</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
+]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupHeader_show" js="0">Show</word><word key="aXenGroupHeader_display" js="0">Display</word><word key="aXenGroupHeader_config" js="0">Configuration</word><word key="aXenGroup_display_primary" js="0">Display primary group</word><word key="aXenGroup_display_secondary" js="0">Display secondary group</word><word key="aXenGroup_display_0" js="0">None</word><word key="aXenGroup_display_1" js="0">Only text</word><word key="aXenGroup_display_2" js="0">Only icon</word><word key="aXenGroup_display_3" js="0">Text and Icons</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
 
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -684,6 +688,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 3.0.2 Upgrade Code
  */
 class ips_plugins_setup_upg_22008
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22009" human="3.0.3"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 3.0.3 Upgrade Code
+ */
+class ips_plugins_setup_upg_22009
 {
 	/**
 	 * ...
