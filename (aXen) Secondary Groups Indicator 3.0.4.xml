@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22009" version_human="3.0.3" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22010" version_human="3.0.4" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -111,7 +111,8 @@ class hook168 extends _HOOK_CLASS_
                 0 => array(
                     'selector' => 'article aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group\']',
                     'type' => 'replace',
-                    'content' => '{{if settings.aXenGroup_display_primary == 1 || settings.aXenGroup_display_primary == 3}}
+                    'content' => '
+{{if settings.aXenGroup_display_primary == 1 || settings.aXenGroup_display_primary == 3}}
 	<li data-role="group">
 		{expression="\IPS\Member\Group::load( $comment->author()->member_group_id )->formattedName" raw="true"}
 	</li>
@@ -123,8 +124,7 @@ class hook168 extends _HOOK_CLASS_
 	</li>
 {{endif}}
 
-
-{{if $comment->author()->aXenSGISortedGroups() && settings.aXenGroup_display_secondary > 0}}
+{{if settings.aXenGroupTopics && $comment->author()->aXenSGISortedGroups() && settings.aXenGroup_display_secondary > 0}}
     {{foreach $comment->author()->aXenSGISortedGroups() as $group}}
             {{if settings.aXenGroup_display_secondary == 1 || settings.aXenGroup_display_secondary == 3 || (settings.aXenGroup_display_secondary == 2 && !$group->g_icon)}}
                 <li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
@@ -717,6 +717,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 3.0.3 Upgrade Code
  */
 class ips_plugins_setup_upg_22009
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22010" human="3.0.4"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 3.0.4 Upgrade Code
+ */
+class ips_plugins_setup_upg_22010
 {
 	/**
 	 * ...
