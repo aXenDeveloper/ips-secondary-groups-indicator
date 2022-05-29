@@ -11,7 +11,7 @@ Include with **Secondary Groups Icon** in 3.0.0 version.
 
 ## 🏷️ Requirements
 
-- [IPS Community Suite: 4.5, 4.6 version](https://invisioncommunity.com/)
+- [IPS Community Suite: 4.5, 4.6, 4.7 version](https://invisioncommunity.com/)
 
 ## 🧰 Install
 
