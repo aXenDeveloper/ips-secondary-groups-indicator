@@ -29,6 +29,43 @@ Include with **Secondary Groups Icon** in 3.0.0 version.
    ![Upload a new version](https://files.axendev.net/github/plugins/new_version_upload.png)
 3. Select file **.xml** from packet and click install button.
 
+# 🔧 Templates for pHTML files
+
+From version _4.0.0_, special templates have been made available for developers of custom themes.
+
+### Profile
+
+- @param $member - \IPS\Member
+- @param $showTitle - Show title widget? _(Default: true)_
+
+```
+{template="aXenProfileSecondaryGroups" group="plugins" location="global" app="core" params="$member, true"}
+```
+
+### Hovercard
+
+- @param $member - \IPS\Member
+
+```
+{template="aXenHovercardSecondaryGroups" group="plugins" location="global" app="core" params="$member"}
+```
+
+### Search
+
+- @param $member - \IPS\Member
+
+```
+{template="aXenSearchSecondaryGroups" group="plugins" location="global" app="core" params="$member"}
+```
+
+### Topics
+
+- @param $comment - \IPS\Member author
+
+```
+{template="aXenTopicsSecondaryGroups" group="plugins" location="global" app="core" params="$comment"}
+```
+
 ## 📷 Graphics
 
 ![1](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/1.png?raw=true)
@@ -36,6 +73,8 @@ Include with **Secondary Groups Icon** in 3.0.0 version.
 ![3](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/3.png?raw=true)
 ![4](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/4.png?raw=true)
 ![5](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/5.png?raw=true)
+![6](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/6.png?raw=true)
+![7](https://github.com/aXenDeveloper/ips-secondary-groups-indicator/blob/master/7.png?raw=true)
 
 ## 🔌 Download from other sources
 

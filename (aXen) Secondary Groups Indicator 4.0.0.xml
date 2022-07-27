@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="(aXen) Secondary Groups Indicator" version_long="22012" version_human="3.0.6" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
+<plugin name="(aXen) Secondary Groups Indicator" version_long="22013" version_human="4.0.0" author="aXenDev" website="https://axendev.net/" update_check="https://files.axendev.net/projects/ips/plugins/secondarygroupsindicator/check.php"><hooks><hook type="C" class="\IPS\Member" filename="aXenSGISortedGroups"><![CDATA[//<?php
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if (!\defined('\IPS\SUITE_UNIQUE_KEY')) {
@@ -80,13 +80,7 @@ class hook167 extends _HOOK_CLASS_
                 0 => array(
                     'selector' => 'li.ipsStreamItem_member > div.ipsStreamItem_container > div.ipsStreamItem_header > p',
                     'type' => 'add_after',
-                    'content' => '
-{{if $member->aXenSGISortedGroups() && settings.aXenGroupSearch}}
-  {{foreach $member->aXenSGISortedGroups() as $group}}
-    <p class="ipsType_reset ipsType_medium">{$group->formattedName|raw}</p>
-  {{endforeach}}
-{{endif}}
-',
+                    'content' => '{template="aXenSearchSecondaryGroups" group="plugins" location="global" app="core" params="$member"}',
                 ),
             ),
         ), parent::hookData());
@@ -111,33 +105,7 @@ class hook168 extends _HOOK_CLASS_
                 0 => array(
                     'selector' => 'article aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group\']',
                     'type' => 'replace',
-                    'content' => '
-{{if settings.aXenGroup_display_primary == 1 || settings.aXenGroup_display_primary == 3}}
-	<li data-role="group">
-		{expression="\IPS\Member\Group::load( $comment->author()->member_group_id )->formattedName" raw="true"}
-	</li>
-{{endif}}
-
-{{if \IPS\Member\Group::load( $comment->author()->member_group_id )->g_icon && settings.aXenGroup_display_primary >= 2}}
-	<li data-role=\'axen-group-icon\'>
-    	<img src=\'{file="$comment->author()->group[\'g_icon\']" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
-	</li>
-{{endif}}
-
-{{if settings.aXenGroupTopics && $comment->author()->aXenSGISortedGroups() && settings.aXenGroup_display_secondary > 0}}
-    {{foreach $comment->author()->aXenSGISortedGroups() as $group}}
-            {{if settings.aXenGroup_display_secondary == 1 || settings.aXenGroup_display_secondary == 3 || (settings.aXenGroup_display_secondary == 2 && !$group->g_icon)}}
-                <li data-role="axen-group-secondary">{$group->formattedName|raw}</li>
-            {{endif}}
-
-            {{if $group->g_icon && (settings.aXenGroup_display_secondary >= 2)}}
-                <li data-role=\'axen-group-icon-secondary\'>
-                    <img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
-                </li>
-            {{endif}}
-    {{endforeach}}
-{{endif}}
-',
+                    'content' => '{template="aXenTopicsSecondaryGroups" group="plugins" location="global" app="core" params="$comment"}',
                 ),
                 1 => array(
                     'selector' => 'article aside.cAuthorPane ul.cAuthorPane_info > li[data-role=\'group-icon\']',
@@ -160,57 +128,26 @@ class hook169 extends _HOOK_CLASS_
 {
 
     /* !Hook Data - DO NOT REMOVE */
-public static function hookData() {
- return array_merge_recursive( array (
-  'profile' => 
-  array (
-    0 => 
-    array (
-      'selector' => '#elProfileInfoColumn > div',
-      'type' => 'add_inside_start',
-      'content' => '{{if settings.aXenGroupProfile && $member->aXenSGISortedGroups() && settings.aXenGroup_display_secondary > 0}}
-	<div class="ipsWidget ipsWidget_vertical cProfileSidebarBlock ipsBox ipsBox--child ipsSpacer_bottom" data-location="secondaryGroups">
-		<h2 class="ipsWidget_title ipsType_reset">{lang="aXenGroup_other"}</h2>
-		<div class="ipsWidget_inner ipsPad ipsFlex ipsFlex-ai:center ipsFlex-jc:center ipsFlex-fd:column">
-          	{{foreach $member->aXenSGISortedGroups() as $group}}
-          		{{if settings.aXenGroup_display_secondary == 1 || settings.aXenGroup_display_secondary == 3 || (settings.aXenGroup_display_secondary == 2 && !$group->g_icon)}}
-          			<span>{$group->formattedName|raw}</span>
-          		{{endif}}
-
-          		{{if $group->g_icon && settings.aXenGroup_display_secondary >= 2}}
-					<img src=\'{file="$group->g_icon" extension="core_Theme"}\' alt=\'\' class=\'cAuthorGroupIcon\' />
-				{{endif}}
-			{{endforeach}}
-		</div>
-	</div>
-{{endif}}',
-    ),
-  ),
-  'hovercard' => 
-  array (
-    0 => 
-    array (
-      'selector' => 'div.cUserHovercard > div.ipsFlex > dl',
-      'type' => 'add_after',
-      'content' => '{{if $member->aXenSGISortedGroups() && settings.aXenGroupHovercard && settings.aXenGroupVersion === \'ips46\'}}
-	<div class="ipsFlex ipsFlex-ai:center ipsFlex-jc:between ipsMargin_top ipsFlex-as:stretch">
-      <div class="ipsType_bold ipsFlex-flex:00 ipsMargin_right">
-      	{lang="aXenGroup_other"}
-      </div>
-      <ul class="ipsList_inline ipsList_csv ipsList_noSpacing ipsType_right">
-        {{foreach $member->aXenSGISortedGroups() as $group}}
-        	<li>{$group->formattedName|raw}</li>
-		{{endforeach}}
-      </ul>
-	</div>
-{{endif}}
-',
-    ),
-    1 => 
-    array (
-      'selector' => 'div.cUserHovercard > div.cUserHovercard_data > ul.ipsDataList',
-      'type' => 'add_inside_start',
-      'content' => '{{if $member->aXenSGISortedGroups() && settings.aXenGroupHovercard && settings.aXenGroupVersion === \'ips45\'}}
+    public static function hookData()
+    {
+        return array_merge_recursive(array(
+            'profile' => array(
+                0 => array(
+                    'selector' => '#elProfileInfoColumn > div',
+                    'type' => 'add_inside_start',
+                    'content' => '{template="aXenProfileSecondaryGroups" group="plugins" location="global" app="core" params="$member"}',
+                ),
+            ),
+            'hovercard' => array(
+                0 => array(
+                    'selector' => 'div.cUserHovercard > div.ipsFlex > dl',
+                    'type' => 'add_after',
+                    'content' => '{template="aXenHovercardSecondaryGroups" group="plugins" location="global" app="core" params="$member"}',
+                ),
+                1 => array(
+                    'selector' => 'div.cUserHovercard > div.cUserHovercard_data > ul.ipsDataList',
+                    'type' => 'add_inside_start',
+                    'content' => '{{if $member->aXenSGISortedGroups() && settings.aXenGroupHovercard && settings.aXenGroupVersion === \'ips45\'}}
 	<li class="ipsDataItem">
 		<span class="ipsDataItem_generic ipsDataItem_size3"><strong>{lang="aXenGroup_other"}</strong></span>
 		<span class="ipsDataItem_main">
@@ -223,13 +160,13 @@ public static function hookData() {
 	</li>
 {{endif}}
 ',
-    ),
-  ),
-), parent::hookData() );
-}
+                ),
+            ),
+        ), parent::hookData());
+    }
 /* End Hook Data */
 }
-]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroup_display_primary</key><default>3</default></setting><setting><key>aXenGroup_display_secondary</key><default>3</default></setting></settings><settingsCode><![CDATA[//<?php
+]]></hook></hooks><settings><setting><key>aXenGroupTopics</key><default>1</default></setting><setting><key>aXenGroupHovercard</key><default>1</default></setting><setting><key>aXenGroupProfile</key><default>1</default></setting><setting><key>aXenGroupSearch</key><default>1</default></setting><setting><key>aXenGroup</key><default/></setting><setting><key>aXenGroupExclude</key><default/></setting><setting><key>aXenGroupVersion</key><default>ips46</default></setting><setting><key>aXenGroup_display_primary</key><default>3</default></setting><setting><key>aXenGroup_display_secondary</key><default>3</default></setting><setting><key>aXenGroup_display_profile_secondary</key><default>3</default></setting></settings><settingsCode><![CDATA[//<?php
 
 $groups = array();
 foreach (\IPS\Member\Group::groups() as $k => $v) {
@@ -242,13 +179,14 @@ $form->add(new \IPS\Helpers\Form\Select('aXenGroupVersion', \IPS\Settings::i()->
     'options' => ['ips45' => 'IPS 4.5', 'ips46' => 'IPS 4.6/4.7'],
 ]));
 
-$form->addHeader('aXenGroupHeader_show');
+$form->addTab('aXenGroupHeader_show');
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupTopics', \IPS\Settings::i()->aXenGroupTopics));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupHovercard', \IPS\Settings::i()->aXenGroupHovercard));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupProfile', \IPS\Settings::i()->aXenGroupProfile));
 $form->add(new \IPS\Helpers\Form\YesNo('aXenGroupSearch', \IPS\Settings::i()->aXenGroupSearch));
 
-$form->addHeader('aXenGroupHeader_display');
+$form->addTab('aXenGroupHeader_display');
+$form->addHeader('aXenGroupHeader_display_topics');
 $form->add(new \IPS\Helpers\Form\Select('aXenGroup_display_primary', \IPS\Settings::i()->aXenGroup_display_primary, false, ['options' => [
     0 => 'aXenGroup_display_0',
     1 => 'aXenGroup_display_1',
@@ -261,8 +199,15 @@ $form->add(new \IPS\Helpers\Form\Select('aXenGroup_display_secondary', \IPS\Sett
     2 => 'aXenGroup_display_2',
     3 => 'aXenGroup_display_3',
 ]]));
+$form->addHeader('aXenGroupHeader_display_profile');
+$form->add(new \IPS\Helpers\Form\Select('aXenGroup_display_profile_secondary', \IPS\Settings::i()->aXenGroup_display_profile_secondary, false, ['options' => [
+    0 => 'aXenGroup_display_0',
+    1 => 'aXenGroup_display_1',
+    2 => 'aXenGroup_display_2',
+    3 => 'aXenGroup_display_3',
+]]));
 
-$form->addHeader('aXenGroupHeader_config');
+$form->addTab('aXenGroupHeader_config');
 $form->add(new \IPS\Helpers\Form\Stack('aXenGroup', (isset(\IPS\Settings::i()->aXenGroup)) ? explode(",", \IPS\Settings::i()->aXenGroup) : null, true, array('stackFieldType' => 'Select', 'options' => $groups, 'parse' => 'normal')));
 $form->add(new \IPS\Helpers\Form\Select('aXenGroupExclude', \IPS\Settings::i()->aXenGroupExclude === '' ? '*' : (\IPS\Settings::i()->aXenGroupExclude === '*' ? '*' : explode(',', \IPS\Settings::i()->aXenGroupExclude)), false, ['options' => \IPS\Member\Group::groups(true, false), 'multiple' => true, 'parse' => 'normal']));
 
@@ -272,7 +217,7 @@ if ($values = $form->values()) {
 }
 
 return $form;
-]]></settingsCode><tasks/><widgets/><htmlFiles/><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupHeader_show" js="0">Show</word><word key="aXenGroupHeader_display" js="0">Display</word><word key="aXenGroupHeader_config" js="0">Configuration</word><word key="aXenGroup_display_primary" js="0">Display primary group</word><word key="aXenGroup_display_secondary" js="0">Display secondary group</word><word key="aXenGroup_display_0" js="0">None</word><word key="aXenGroup_display_1" js="0">Only text</word><word key="aXenGroup_display_2" js="0">Only icon</word><word key="aXenGroup_display_3" js="0">Text and Icons</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
+]]></settingsCode><tasks/><widgets/><htmlFiles><html filename="aXenHovercardSecondaryGroups.phtml">PGlwczp0ZW1wbGF0ZSBwYXJhbWV0ZXJzPSIkbWVtYmVyIiAvPg0Ke3tpZiAkbWVtYmVyLT5hWGVuU0dJU29ydGVkR3JvdXBzKCkgJiYgc2V0dGluZ3MuYVhlbkdyb3VwSG92ZXJjYXJkICYmIHNldHRpbmdzLmFYZW5Hcm91cFZlcnNpb24gPT09ICdpcHM0Nid9fQ0KCTxkaXYgY2xhc3M9Imlwc0ZsZXggaXBzRmxleC1haTpjZW50ZXIgaXBzRmxleC1qYzpiZXR3ZWVuIGlwc01hcmdpbl90b3AgaXBzRmxleC1hczpzdHJldGNoIj4NCiAgICAgIDxkaXYgY2xhc3M9Imlwc1R5cGVfYm9sZCBpcHNGbGV4LWZsZXg6MDAgaXBzTWFyZ2luX3JpZ2h0Ij4NCiAgICAgIAl7bGFuZz0iYVhlbkdyb3VwX290aGVyIn0NCiAgICAgIDwvZGl2Pg0KICAgICAgPHVsIGNsYXNzPSJpcHNMaXN0X2lubGluZSBpcHNMaXN0X2NzdiBpcHNMaXN0X25vU3BhY2luZyBpcHNUeXBlX3JpZ2h0Ij4NCiAgICAgICAge3tmb3JlYWNoICRtZW1iZXItPmFYZW5TR0lTb3J0ZWRHcm91cHMoKSBhcyAkZ3JvdXB9fQ0KICAgICAgICAJPGxpPnskZ3JvdXAtPmZvcm1hdHRlZE5hbWV8cmF3fTwvbGk+DQoJCXt7ZW5kZm9yZWFjaH19DQogICAgICA8L3VsPg0KCTwvZGl2Pg0Ke3tlbmRpZn19DQo=</html><html filename="aXenProfileSecondaryGroups.phtml">PGlwczp0ZW1wbGF0ZSBwYXJhbWV0ZXJzPSIkbWVtYmVyLCAkc2hvd1RpdGxlPXRydWUiIC8+DQp7e2lmIHNldHRpbmdzLmFYZW5Hcm91cFByb2ZpbGUgJiYgJG1lbWJlci0+YVhlblNHSVNvcnRlZEdyb3VwcygpICYmIHNldHRpbmdzLmFYZW5Hcm91cF9kaXNwbGF5X3Byb2ZpbGVfc2Vjb25kYXJ5ID4gMH19DQoJPGRpdiBjbGFzcz0iaXBzV2lkZ2V0IGlwc1dpZGdldF92ZXJ0aWNhbCBjUHJvZmlsZVNpZGViYXJCbG9jayBpcHNCb3ggaXBzQm94LS1jaGlsZCBpcHNTcGFjZXJfYm90dG9tIiBkYXRhLWxvY2F0aW9uPSJzZWNvbmRhcnlHcm91cHMiPg0KCQl7e2lmICRzaG93VGl0bGV9fQ0KCQkJPGgyIGNsYXNzPSJpcHNXaWRnZXRfdGl0bGUgaXBzVHlwZV9yZXNldCI+e2xhbmc9ImFYZW5Hcm91cF9vdGhlciJ9PC9oMj4NCgkJe3tlbmRpZn19DQoNCgkJPGRpdiBjbGFzcz0iaXBzV2lkZ2V0X2lubmVyIGlwc1BhZCBpcHNGbGV4IGlwc0ZsZXgtYWk6Y2VudGVyIGlwc0ZsZXgtamM6Y2VudGVyIGlwc0ZsZXgtZmQ6Y29sdW1uIj4NCiAgICAgICAgICAJe3tmb3JlYWNoICRtZW1iZXItPmFYZW5TR0lTb3J0ZWRHcm91cHMoKSBhcyAkZ3JvdXB9fQ0KICAgICAgICAgIAkJe3tpZiBzZXR0aW5ncy5hWGVuR3JvdXBfZGlzcGxheV9wcm9maWxlX3NlY29uZGFyeSA9PSAxIHx8IHNldHRpbmdzLmFYZW5Hcm91cF9kaXNwbGF5X3Byb2ZpbGVfc2Vjb25kYXJ5ID09IDMgfHwgKHNldHRpbmdzLmFYZW5Hcm91cF9kaXNwbGF5X3Byb2ZpbGVfc2Vjb25kYXJ5ID09IDIgJiYgISRncm91cC0+Z19pY29uKX19DQogICAgICAgICAgCQkJPHNwYW4+eyRncm91cC0+Zm9ybWF0dGVkTmFtZXxyYXd9PC9zcGFuPg0KICAgICAgICAgIAkJe3tlbmRpZn19DQoNCiAgICAgICAgICAJCXt7aWYgJGdyb3VwLT5nX2ljb24gJiYgc2V0dGluZ3MuYVhlbkdyb3VwX2Rpc3BsYXlfcHJvZmlsZV9zZWNvbmRhcnkgPj0gMn19DQoJCQkJCTxpbWcgc3JjPSd7ZmlsZT0iJGdyb3VwLT5nX2ljb24iIGV4dGVuc2lvbj0iY29yZV9UaGVtZSJ9JyBhbHQ9JycgY2xhc3M9J2NBdXRob3JHcm91cEljb24nIC8+DQoJCQkJe3tlbmRpZn19DQoJCQl7e2VuZGZvcmVhY2h9fQ0KCQk8L2Rpdj4NCgk8L2Rpdj4NCnt7ZW5kaWZ9fQ0K</html><html filename="aXenSearchSecondaryGroups.phtml">PGlwczp0ZW1wbGF0ZSBwYXJhbWV0ZXJzPSIkbWVtYmVyIiAvPg0Ke3tpZiAkbWVtYmVyLT5hWGVuU0dJU29ydGVkR3JvdXBzKCkgJiYgc2V0dGluZ3MuYVhlbkdyb3VwU2VhcmNofX0NCiAge3tmb3JlYWNoICRtZW1iZXItPmFYZW5TR0lTb3J0ZWRHcm91cHMoKSBhcyAkZ3JvdXB9fQ0KICAgIDxwIGNsYXNzPSJpcHNUeXBlX3Jlc2V0IGlwc1R5cGVfbWVkaXVtIj57JGdyb3VwLT5mb3JtYXR0ZWROYW1lfHJhd308L3A+DQogIHt7ZW5kZm9yZWFjaH19DQp7e2VuZGlmfX0NCg==</html><html filename="aXenTopicsSecondaryGroups.phtml">PGlwczp0ZW1wbGF0ZSBwYXJhbWV0ZXJzPSIkY29tbWVudCIgLz4NCnt7aWYgc2V0dGluZ3MuYVhlbkdyb3VwX2Rpc3BsYXlfcHJpbWFyeSA9PSAxIHx8IHNldHRpbmdzLmFYZW5Hcm91cF9kaXNwbGF5X3ByaW1hcnkgPT0gM319DQoJPGxpIGRhdGEtcm9sZT0iZ3JvdXAiPg0KCQl7ZXhwcmVzc2lvbj0iXElQU1xNZW1iZXJcR3JvdXA6OmxvYWQoICRjb21tZW50LT5hdXRob3IoKS0+bWVtYmVyX2dyb3VwX2lkICktPmZvcm1hdHRlZE5hbWUiIHJhdz0idHJ1ZSJ9DQoJPC9saT4NCnt7ZW5kaWZ9fQ0KDQp7e2lmIFxJUFNcTWVtYmVyXEdyb3VwOjpsb2FkKCAkY29tbWVudC0+YXV0aG9yKCktPm1lbWJlcl9ncm91cF9pZCApLT5nX2ljb24gJiYgc2V0dGluZ3MuYVhlbkdyb3VwX2Rpc3BsYXlfcHJpbWFyeSA+PSAyfX0NCgk8bGkgZGF0YS1yb2xlPSdheGVuLWdyb3VwLWljb24nPg0KICAgIAk8aW1nIHNyYz0ne2ZpbGU9IiRjb21tZW50LT5hdXRob3IoKS0+Z3JvdXBbJ2dfaWNvbiddIiBleHRlbnNpb249ImNvcmVfVGhlbWUifScgYWx0PScnIGNsYXNzPSdjQXV0aG9yR3JvdXBJY29uJyAvPg0KCTwvbGk+DQp7e2VuZGlmfX0NCg0Ke3tpZiBzZXR0aW5ncy5hWGVuR3JvdXBUb3BpY3MgJiYgJGNvbW1lbnQtPmF1dGhvcigpLT5hWGVuU0dJU29ydGVkR3JvdXBzKCkgJiYgc2V0dGluZ3MuYVhlbkdyb3VwX2Rpc3BsYXlfc2Vjb25kYXJ5ID4gMCAmJiBcY291bnQoJGNvbW1lbnQtPmF1dGhvcigpLT5hWGVuU0dJU29ydGVkR3JvdXBzKCkpID4gMH19DQogICAge3tmb3JlYWNoICRjb21tZW50LT5hdXRob3IoKS0+YVhlblNHSVNvcnRlZEdyb3VwcygpIGFzICRncm91cH19DQogICAgICAgICAgICB7e2lmIHNldHRpbmdzLmFYZW5Hcm91cF9kaXNwbGF5X3NlY29uZGFyeSA9PSAxIHx8IHNldHRpbmdzLmFYZW5Hcm91cF9kaXNwbGF5X3NlY29uZGFyeSA9PSAzIHx8IChzZXR0aW5ncy5hWGVuR3JvdXBfZGlzcGxheV9zZWNvbmRhcnkgPT0gMiAmJiAhJGdyb3VwLT5nX2ljb24pfX0NCiAgICAgICAgICAgICAgICA8bGkgZGF0YS1yb2xlPSJheGVuLWdyb3VwLXNlY29uZGFyeSI+eyRncm91cC0+Zm9ybWF0dGVkTmFtZXxyYXd9PC9saT4NCiAgICAgICAgICAgIHt7ZW5kaWZ9fQ0KDQogICAgICAgICAgICB7e2lmICRncm91cC0+Z19pY29uICYmIChzZXR0aW5ncy5hWGVuR3JvdXBfZGlzcGxheV9zZWNvbmRhcnkgPj0gMil9fQ0KICAgICAgICAgICAgICAgIDxsaSBkYXRhLXJvbGU9J2F4ZW4tZ3JvdXAtaWNvbi1zZWNvbmRhcnknPg0KICAgICAgICAgICAgICAgICAgICA8aW1nIHNyYz0ne2ZpbGU9IiRncm91cC0+Z19pY29uIiBleHRlbnNpb249ImNvcmVfVGhlbWUifScgYWx0PScnIGNsYXNzPSdjQXV0aG9yR3JvdXBJY29uJyAvPg0KICAgICAgICAgICAgICAgIDwvbGk+DQogICAgICAgICAgICB7e2VuZGlmfX0NCiAgICB7e2VuZGZvcmVhY2h9fQ0Ke3tlbmRpZn19DQo=</html></htmlFiles><cssFiles/><jsFiles/><resourcesFiles/><lang><word key="aXenGroup" js="0">Choose sorting groups</word><word key="aXenGroupExclude" js="0">Exclude member groups from display</word><word key="aXenGroupSearch" js="0">Show in Search?</word><word key="aXenGroupProfile" js="0">Show in Profile?</word><word key="aXenGroupHovercard" js="0">Show in Hovercard?</word><word key="aXenGroupTopics" js="0">Show in Topics?</word><word key="aXenGroup_other" js="0">Other groups</word><word key="aXenGroupVersion" js="0">Select your IPS version</word><word key="aXenGroupHeader_show" js="0">Show</word><word key="aXenGroupHeader_display" js="0">Display</word><word key="aXenGroupHeader_config" js="0">Configuration</word><word key="aXenGroup_display_primary" js="0">Display primary group</word><word key="aXenGroup_display_secondary" js="0">Display secondary group</word><word key="aXenGroup_display_profile_primary" js="0">Display primary group</word><word key="aXenGroup_display_profile_secondary" js="0">Display secondary group</word><word key="aXenGroupHeader_display_topics" js="0">Topics</word><word key="aXenGroupHeader_display_profile" js="0">Profile</word><word key="aXenGroup_display_0" js="0">None</word><word key="aXenGroup_display_1" js="0">Only text</word><word key="aXenGroup_display_2" js="0">Only icon</word><word key="aXenGroup_display_3" js="0">Text and Icons</word></lang><versions><version long="10000" human="1.0.0"/><version long="11000" human="1.1.0"><![CDATA[//<?php
 
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
@@ -808,6 +753,35 @@ if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
  * 3.0.6 Upgrade Code
  */
 class ips_plugins_setup_upg_22012
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version><version long="22013" human="4.0.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 4.0.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_22013
 {
 	/**
 	 * ...
