@@ -31,7 +31,7 @@ Include with **Secondary Groups Icon** in 3.0.0 version.
 
 # 🔧 Templates for pHTML files
 
-From version _4.0.0_, special templates have been made available for developers of custom themes.
+From version **4.0.0**, special templates have been made available for developers of custom themes.
 
 ### Profile
 
