@@ -36,7 +36,7 @@ From version **4.0.0**, special templates have been made available for developer
 ### Profile
 
 - @param $member - \IPS\Member
-- @param $showTitle - Show title widget? _(Default: true)_
+- @param $showTitle - Boolean - Show title widget? _(Default: true)_
 
 ```
 {template="aXenProfileSecondaryGroups" group="plugins" location="global" app="core" params="$member, true"}
